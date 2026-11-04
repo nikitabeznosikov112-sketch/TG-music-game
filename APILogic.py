@@ -6,7 +6,7 @@ import asyncio
 
 load_dotenv()
 
-TAGS = ['rock', 'hiphop', 'indie', 'jazz', '80-s', 'acoustic', 'rnb', 'dance', 'hardcore', 'rap', 'country', 'alternative']
+TAGS = ['rock', 'hiphop', 'indie', 'jazz', '80s', 'acoustic', 'dance', 'hardcore', 'rap', 'country', 'alternative']
 API_KEY = os.getenv('API_KEY')
 USER_AGENT = "MyMusicApp/1.0"
 headers = {'User-Agent': USER_AGENT}
