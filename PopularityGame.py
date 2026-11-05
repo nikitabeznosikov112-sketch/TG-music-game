@@ -6,7 +6,10 @@ import asyncio
 
 load_dotenv()
 
-TAGS = ['rock', 'hiphop', 'indie', 'jazz', '80s', 'acoustic', 'dance', 'hardcore', 'rap', 'country', 'alternative']
+TAGSmetal = ['black metal', 'thrash metal', 'rock', 'power metal', 'speed metal', 'metal', 'nu metal']
+TAGSpop = ['rap', 'hip-hop', 'r&b', 'pop', 'hyperpop']
+TAGSelectronic = ['electropop', 'electro', 'drum n bass', 'house', 'electronic', 'techno']
+TAGSrus = ['russian']
 API_KEY = os.getenv('API_KEY')
 USER_AGENT = "MyMusicApp/1.0"
 headers = {'User-Agent': USER_AGENT}
@@ -18,7 +21,7 @@ async def get_the_tracks(tag):
     params = {
         'method': 'tag.getTopTracks',
         'api_key': API_KEY,
-        'limit': 50,
+        'limit': 200,
         'tag': tag,
         'format': 'json'
     }
