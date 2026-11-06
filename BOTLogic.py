@@ -2,15 +2,19 @@ import asyncio
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram.fsm.context import FSMContext
 from aiogram import Bot, Dispatcher, types, F
-from APILogic.PopularityGame import get_the_answer, get_the_tracks
-from tags import TAGSelectronic, TAGSmetal, TAGSpop
+from aiogram.filters import Command
+
+import random
 import os
 from dotenv import load_dotenv
-from aiogram.filters import Command
-import random
-from states import MusicGame, DogGame
-from APILogic.DogsGame import get_dogs
-from dog_translations import DOG_BREEDS_RU
+
+from APILogic.MusicGame.PopularityGame import get_the_answer, get_the_tracks
+from APILogic.MusicGame.MusicTags import TAGSelectronic, TAGSmetal, TAGSpop
+from APILogic.MovieGame.MovieGame import movie_game
+from APILogic.states import MusicGame, DogGame, MovieGame
+from APILogic.DogsGame.DogsGame import get_dogs
+from APILogic.DogsGame.dog_translations import DOG_BREEDS_RU
+
 load_dotenv()
 
 bot = Bot(token=os.getenv('BOT_TOKEN'))
@@ -21,7 +25,8 @@ async def cmd_start(message: types.Message, state: FSMContext):
     await state.clear()
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text='Угадай что популярнее', callback_data="game_music")],
-        [InlineKeyboardButton(text='Угадай породу', callback_data="game_dogs")]
+        [InlineKeyboardButton(text='Угадай породу', callback_data="game_dogs")],
+        [InlineKeyboardButton(text='Угадай фильм по кадру', callback_data="game_films")]
     ])
 
     await message.answer(f'Салам,{message.from_user.first_name}, во что поиграем?', reply_markup=keyboard)
@@ -63,7 +68,45 @@ async def game_choice(callback: types.CallbackQuery, state: FSMContext):
         await callback.message.answer_photo(photo=photo, caption="Угадай что за порода песеля?", reply_markup=keyboard)
 
         await state.set_state(DogGame.waiting_for_answer)
+    elif choice == 'game_films':
+        game_data = await movie_game()
+        if not game_data:
+            await callback.message.answer('Сорян ошибка')
+            return
+        movies = game_data['movies']
+        titles = [m['title'] for m in movies]
+        correct_answer = game_data['correct_answer']
+        photo = game_data['photo']
+
+        await state.update_data(correct_answer=correct_answer, titles=titles)
+
+        keyboard = InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text=titles[0], callback_data="movie_0")],
+            [InlineKeyboardButton(text=titles[1], callback_data="movie_1")],
+            [InlineKeyboardButton(text=titles[2], callback_data="movie_2")],
+            [InlineKeyboardButton(text=titles[3], callback_data="movie-3")]
+        ])
+
+        await callback.message.answer_photo(photo=photo, caption='Из какого фильмеца кадр?', reply_markup=keyboard)
+        await state.set_state(MovieGame.waiting_for_answer)
     await callback.answer()
+
+@dp.callback_query(MovieGame.waiting_for_answer, F.data.startswith('movie_'))
+async def film_game_proccessing(callback: types.CallbackQuery, state: FSMContext):
+    data = await state.get_data()
+    titles = data.get('titles')
+    correct_answer = data.get('correct_answer')
+    user_idx = int(callback.data.replace('movie_', ''))
+    user_choice = titles[user_idx]
+
+    if user_choice == correct_answer:
+        await callback.message.answer('Красава, все правильно')
+    else:
+        await callback.message.answer(f'Неправильно, правильный ответ: {correct_answer}')
+
+    await state.clear()
+    await callback.answer()
+
 
 @dp.callback_query(DogGame.waiting_for_answer, F.data.startswith('dog_'))
 async def dogplay_proccess(callback: types.CallbackQuery, state: FSMContext):

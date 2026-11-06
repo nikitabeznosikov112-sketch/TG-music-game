@@ -6,7 +6,7 @@ import asyncio
 
 load_dotenv()
 
-API_KEY = os.getenv('API_KEY')
+API_KEY = os.getenv('API_KEY_LAST_FM')
 USER_AGENT = "MyMusicApp/1.0"
 headers = {'User-Agent': USER_AGENT}
 

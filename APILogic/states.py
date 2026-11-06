@@ -8,3 +8,7 @@ class MusicGame(StatesGroup):
 class DogGame(StatesGroup):
     waiting_for_answer = State()
     waiting_for_choice = State()
+
+class MovieGame(StatesGroup):
+    waiting_for_answer = State()
+    waiting_for_choice = State()
