@@ -6,10 +6,6 @@ import asyncio
 
 load_dotenv()
 
-TAGSmetal = ['black metal', 'thrash metal', 'rock', 'power metal', 'speed metal', 'metal', 'nu metal']
-TAGSpop = ['rap', 'hip-hop', 'r&b', 'pop', 'hyperpop']
-TAGSelectronic = ['electropop', 'electro', 'drum n bass', 'house', 'electronic', 'techno']
-TAGSrus = ['russian']
 API_KEY = os.getenv('API_KEY')
 USER_AGENT = "MyMusicApp/1.0"
 headers = {'User-Agent': USER_AGENT}
@@ -17,7 +13,6 @@ headers = {'User-Agent': USER_AGENT}
 url = "http://ws.audioscrobbler.com/2.0"
 
 async def get_the_tracks(tag):
-
     params = {
         'method': 'tag.getTopTracks',
         'api_key': API_KEY,
@@ -37,12 +32,14 @@ async def get_the_tracks(tag):
 
                 name1 = track1['name']
                 artist1 = track1['artist']['name']
+                volume1 = track1["image"][1]['#text']
 
                 name2 = track2['name']
                 artist2 = track2['artist']['name']
+                volume2 = track2["image"][1]
 
                 print (tag, name1, artist1, name2, artist2 )
-                return [{'name': name1, 'artist': artist1},{'name': name2, 'artist': artist2}]
+                return [{'name': name1, 'artist': artist1, 'volume': volume1},{'name': name2, 'artist': artist2, 'volume': volume2}]
         
 
             else:
@@ -101,8 +98,10 @@ async def get_the_answer(tracks):
             print(e)
 
     if listeners1 > listeners2:
+        print(tracks[0]['name'])
         return tracks[0]['name']
     else:
+        print(tracks[1]['name'])
         return tracks[1]['name']
 
 async def main():
