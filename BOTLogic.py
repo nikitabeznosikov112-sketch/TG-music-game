@@ -99,15 +99,48 @@ async def film_game_proccessing(callback: types.CallbackQuery, state: FSMContext
     user_idx = int(callback.data.replace('movie_', ''))
     user_choice = titles[user_idx]
 
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text='Играть еще раз', callback_data='again_movie')],
+        [InlineKeyboardButton(text='В меню', callback_data='main_menu')]
+    ])
     if user_choice == correct_answer:
-        await callback.message.answer('Красава, все правильно')
+        await callback.message.answer('Красава, все правильно', reply_markup=keyboard)
     else:
-        await callback.message.answer(f'Неправильно, правильный ответ: {correct_answer}')
+        await callback.message.answer(f'Неправильно, правильный ответ: {correct_answer}', reply_markup=keyboard)
 
-    await state.clear()
+    await state.set_state(MovieGame.waiting_for_choice)
     await callback.answer()
 
+@dp.callback_query(MovieGame.waiting_for_choice, F.data.in_({'again_movie', 'main_menu'}))
+async def choice_film(callback: types.CallbackQuery, state: FSMContext):
+    user_choice = callback.data
 
+    if user_choice == 'again_movie':
+        game_data = await movie_game()
+        if not game_data:
+            await callback.message.answer('Сорян ошибка')
+            return
+        movies = game_data['movies']
+        titles = [m['title'] for m in movies]
+        correct_answer = game_data['correct_answer']
+        photo = game_data['photo']
+
+        await state.update_data(correct_answer=correct_answer, titles=titles)
+
+        keyboard = InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text=titles[0], callback_data="movie_0")],
+            [InlineKeyboardButton(text=titles[1], callback_data="movie_1")],
+            [InlineKeyboardButton(text=titles[2], callback_data="movie_2")],
+            [InlineKeyboardButton(text=titles[3], callback_data="movie_3")]
+        ])
+
+        await callback.message.answer_photo(photo=photo, caption='Из какого фильмеца кадр?', reply_markup=keyboard)
+        await state.set_state(MovieGame.waiting_for_answer)
+
+    elif user_choice == 'main_menu':
+        await callback.message.answer('Напиши /start')
+
+    await callback.answer()
 @dp.callback_query(DogGame.waiting_for_answer, F.data.startswith('dog_'))
 async def dogplay_proccess(callback: types.CallbackQuery, state: FSMContext):
     data = await state.get_data()
