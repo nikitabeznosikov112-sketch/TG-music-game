@@ -8,6 +8,8 @@ import random
 import os
 from dotenv import load_dotenv
 
+from Database import get_user, show_score, add_score, create_user
+
 from APILogic.MusicGame.PopularityGame import get_the_answer, get_the_tracks
 from APILogic.MusicGame.MusicTags import TAGSelectronic, TAGSmetal, TAGSpop
 from APILogic.MovieGame.MovieGame import movie_game
@@ -22,6 +24,9 @@ dp = Dispatcher()
 
 @dp.message(Command("start"))
 async def cmd_start(message: types.Message, state: FSMContext):
+    user = get_user(message.from_user.id)
+    if not user:
+        create_user(tg_id=message.from_user.id, user_name=message.from_user.first_name)
     await state.clear()
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text='Угадай что популярнее', callback_data="game_music")],
@@ -29,9 +34,13 @@ async def cmd_start(message: types.Message, state: FSMContext):
         [InlineKeyboardButton(text='Угадай фильм по кадру', callback_data="game_films")]
     ])
 
-    await message.answer(f'Салам,{message.from_user.first_name}, во что поиграем?', reply_markup=keyboard)
+    await message.answer(f'Салам,{message.from_user.first_name}, во что поиграем?\n\n /stats для просмотра статистики', reply_markup=keyboard)
     await state.set_state(MusicGame.waiting_for_choice)
 
+@dp.message(Command('stats'))
+async def show_stats(message: types.Message):
+    score = show_score(message.from_user.id)
+    await message.answer(f'Пользователь: {message.from_user.full_name}\n\nОчков за правильные ответы:{score}')
 @dp.callback_query(MusicGame.waiting_for_choice, F.data.startswith("game_"))
 async def game_choice(callback: types.CallbackQuery, state: FSMContext):
     choice = callback.data
@@ -105,6 +114,7 @@ async def film_game_proccessing(callback: types.CallbackQuery, state: FSMContext
     ])
     if user_choice == correct_answer:
         await callback.message.answer('Красава, все правильно', reply_markup=keyboard)
+        add_score(callback.from_user.id, 1)
     else:
         await callback.message.answer(f'Неправильно, правильный ответ: {correct_answer}', reply_markup=keyboard)
 
@@ -154,6 +164,7 @@ async def dogplay_proccess(callback: types.CallbackQuery, state: FSMContext):
 
     if user_choice == correct_answer:
         await callback.message.answer('Красава, ответ правильный', reply_markup=keyboard)
+        add_score(callback.from_user.id, 1)
     else:
         await callback.message.answer(f'Неправильно. Правильный ответ: {DOG_BREEDS_RU.get(correct_answer, correct_answer)}', reply_markup=keyboard)
 
@@ -241,6 +252,7 @@ async def answer_musgame(message: types.Message, state: FSMContext):
 
     if message.text == correct_answer:
         await message.answer('Красава, ответ правильный', reply_markup=keyboard)
+        add_score(message.from_user.id, 1)
     else:
         await message.answer(f'Не правильно. {correct_answer} популярнее', reply_markup=keyboard)
 
