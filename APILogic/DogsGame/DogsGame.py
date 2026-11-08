@@ -61,10 +61,10 @@ async def get_dogs():
                 return {'dogs': gamedogs, 'correct_answer': correct_answer, 'photo': photo}
             else:
                 print('Ошибка в API')
-                return 
+                return ('Ошибка в API') 
         except Exception as e:
             print(e)
-            return 
+            return ('Ошибка')
         
 
 

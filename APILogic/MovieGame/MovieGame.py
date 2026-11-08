@@ -18,7 +18,7 @@ async def movie_game():
             response = await client.get(url_for_getting_films, headers=headers, params=params)
 
             if response.status_code != 200:
-                return None
+                return 'Ошибка в получении фильмов'
 
             movies = response.json()['results']
             game_movies = random.sample(movies, 4)
@@ -43,6 +43,8 @@ async def movie_game():
                     photo_url = f"https://image.tmdb.org/t/p/w780{photo['file_path']}"
                 else:
                     photo_url = f"https://image.tmdb.org/t/p/w500{correct_movie['poster_path']}"
+            else:
+                return 'Ошибка в получении кадра'
 
             return {
                 'movies': game_movies,
@@ -50,4 +52,5 @@ async def movie_game():
                 'photo': photo_url
             }
         except Exception as e:
+            return ('Ошибка')
             print(e)

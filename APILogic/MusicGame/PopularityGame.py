@@ -32,19 +32,17 @@ async def get_the_tracks(tag):
 
                 name1 = track1['name']
                 artist1 = track1['artist']['name']
-                volume1 = track1["image"][1]['#text']
 
                 name2 = track2['name']
                 artist2 = track2['artist']['name']
-                volume2 = track2["image"][1]
 
                 print (tag, name1, artist1, name2, artist2 )
-                return [{'name': name1, 'artist': artist1, 'volume': volume1},{'name': name2, 'artist': artist2, 'volume': volume2}]
+                return [{'name': name1, 'artist': artist1},{'name': name2, 'artist': artist2}]
         
 
             else:
                 print(response.status_code)
-                return 'Ошибка'
+                return 'Ошибка в API'
         except Exception as e:
             print (e)
             return 'Ошибка'
@@ -69,6 +67,7 @@ async def get_the_answer(tracks):
 
                 listeners1 = int(data['track']['listeners'])
             else:
+                return ('Ошибка первого трека')
                 print(response.status_code)
         except Exception as e:
             print(e)
