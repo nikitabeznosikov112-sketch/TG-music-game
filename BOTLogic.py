@@ -8,7 +8,7 @@ import random
 import os
 from dotenv import load_dotenv
 
-from repositories import UserRepository
+from repositories.user_repositories import UserRepository
 from Database import Session
 
 from APILogic.MusicGame.PopularityGame import get_the_answer, get_the_tracks
