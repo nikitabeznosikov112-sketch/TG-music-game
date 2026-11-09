@@ -30,4 +30,5 @@ class UserRepository:
             return user.score
 
     def get_top(self, limit: int = 10):
+        '''Выдает рейтинг'''
         return self.session.query(User).order_by(User.score.desc()).limit(limit).all()
