@@ -17,22 +17,33 @@ def get_admin_repo():
         session.close()
 
 @app.get('/admin', response_class=HTMLResponse)
-def admin_panel(request: Request):
-    session = Session()
-    repo = AdminRepository(session)
+def admin_panel(request: Request, repo = Depends(get_admin_repo)):
     users = repo.get_all_users()
-    session.close()
-
     return templates.TemplateResponse(request=request, name='index.html', context={'users': users})
 
-@app.post('/admin/delete/{tg_id}')
-def delete_user(tg_id: int, request: Request):
-    session = Session()
-    repo = AdminRepository(session)
-    repo.delete_user(tg_id)
-    session.close()
+@app.get("/admin/confirm_delete/{tg_id}", response_class=HTMLResponse)
+def confirm_delete_user(request: Request, tg_id: int, repo = Depends(get_admin_repo)):
+    user = repo.get_user(tg_id)
+    if not user:
+        return RedirectResponse(url='/admin', status_code=303)
 
+    return templates.TemplateResponse(request=request, name='confirm_delete.html', context={'user': user})
+
+@app.post('/admin/delete/{tg_id}')
+def delete_user(tg_id: int, repo = Depends(get_admin_repo)):
+    repo.delete_user(tg_id)
     return RedirectResponse(url='/admin', status_code=303)
 
+@app.get('/admin/confirm_reset/{tg_id}', response_class=HTMLResponse)
+def confirm_reset_score(request: Request, tg_id: int, repo = Depends(get_admin_repo)):
+    user = repo.get_user(tg_id)
+    if not user:
+        return RedirectResponse(url='/admin', status_code=303)
+    return templates.TemplateResponse(request=request, name='confirm_reset.html', context={'user': user})
+
+@app.post('/admin/reset/{tg_id}')
+def reset_user(tg_id: int, repo = Depends(get_admin_repo)):
+    repo.reset_user(tg_id)
+    return RedirectResponse(url='/admin', status_code=303)
 if __name__ == '__main__':
     uvicorn.run(app, host="0.0.0.0", port=8001)

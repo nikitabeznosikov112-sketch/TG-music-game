@@ -30,12 +30,8 @@
             <td>{{ user.name }}</td>
             <td>{{ user.score }}</td>
             <td>
-                <form action="/admin/delete/{{ user.tg_id }}" method="POST" style="display:inline;">
-                    <button type="submit" class="btn btn-danger">Cбросить счет</button>
-                </form>
-                <form action="/admin/delete/{{ user.tg_id }}" method="POST" style="display:inline;">
-                    <button type="submit" class="btn btn-danger">Удалить</button>
-                </form>
+                <a href="/admin/confirm_delete/{{ user.tg_id }}" class="btn btn-danger">Удалить</a>
+                <a href="/admin/confirm_reset/{{ user.tg_id }}" class="btn btn-danger">Сбросить счет</a>
             </td>
         </tr>
         {% endfor %}
