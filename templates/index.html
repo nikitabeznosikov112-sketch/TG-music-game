@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="'UTF-8">
+    <title>AdminPanel</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; background: #f4f4f4; }
+        table { border-collapse: collapse; width: 100%; background: white; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #333; color: white; }
+        .btn { padding: 5px 10px; background: #3498db; color: white; text-decoration: none; border-radius: 3px; }
+        .btn-danger { background: #e74c3c; }
+    </style>
+</head>
+<body>
+    <h1>Список пользователей</h1>
+
+    <table>
+        <tr>
+            <td>ID</td>
+            <td>Telegram ID</td>
+            <td>Имя</td>
+            <td>Очки</td>
+            <th>Действия</th>
+        </tr>
+        {% for user in users %}
+        <tr>
+            <td>{{ user.id }}</td>
+            <td>{{ user.tg_id }}</td>
+            <td>{{ user.name }}</td>
+            <td>{{ user.score }}</td>
+            <td>
+                <form action="/admin/delete/{{ user.tg_id }}" method="POST" style="display:inline;">
+                    <button type="submit" class="btn btn-danger">Cбросить счет</button>
+                </form>
+                <form action="/admin/delete/{{ user.tg_id }}" method="POST" style="display:inline;">
+                    <button type="submit" class="btn btn-danger">Удалить</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

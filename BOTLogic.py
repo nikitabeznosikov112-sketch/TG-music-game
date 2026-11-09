@@ -32,7 +32,7 @@ async def cmd_start(message: types.Message, state: FSMContext):
     try:
         user = repo.get_by_id(message.from_user.id)
         if not user:
-            repo.create_user(tg_id=message.from_user.id, user_name=message.from_user.first_name)
+            repo.create(message.from_user.id, message.from_user.first_name)
     finally:
         session.close()
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
