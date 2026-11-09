@@ -8,7 +8,7 @@ import random
 import os
 from dotenv import load_dotenv
 
-from Database import get_user, show_score, add_score, create_user
+from Database import get_user, show_score, add_score, create_user, get_ratings
 
 from APILogic.MusicGame.PopularityGame import get_the_answer, get_the_tracks
 from APILogic.MusicGame.MusicTags import TAGSelectronic, TAGSmetal, TAGSpop
@@ -34,13 +34,26 @@ async def cmd_start(message: types.Message, state: FSMContext):
         [InlineKeyboardButton(text='Угадай фильм по кадру', callback_data="game_films")]
     ])
 
-    await message.answer(f'Салам,{message.from_user.first_name}, во что поиграем?\n\n /stats для просмотра статистики', reply_markup=keyboard)
+    await message.answer(f'Салам,{message.from_user.first_name}, во что поиграем?\n\n /stats для просмотра статистики\n/ratings для просмотра рейтинга', reply_markup=keyboard)
     await state.set_state(MusicGame.waiting_for_choice)
 
 @dp.message(Command('stats'))
 async def show_stats(message: types.Message):
     score = show_score(message.from_user.id)
     await message.answer(f'Пользователь: {message.from_user.full_name}\n\nОчков за правильные ответы:{score}')
+
+@dp.message(Command('ratings'))
+async def show_ratings(message: types.Message):
+    ratings = get_ratings()
+    if not ratings:
+        await message.answer('Никто не играл')
+        return
+    text = '**Топ 10 игроков**\n\n'
+    for index, user in enumerate(ratings, start=1):
+        name = user.name if user.name else 'Аноним'
+        text += f'{index}. {name} -- {user.score} очков\n'
+    await message.answer(text, parse_mode='Markdown')
+    
 @dp.callback_query(MusicGame.waiting_for_choice, F.data.startswith("game_"))
 async def game_choice(callback: types.CallbackQuery, state: FSMContext):
     choice = callback.data

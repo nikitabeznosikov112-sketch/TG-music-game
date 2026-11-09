@@ -61,4 +61,12 @@ def show_score(tg_id):
     finally:
         session.close()
 
+def get_ratings(limit=10):
+    session = Session()
+
+    try:
+        top_users = session.query(User).order_by(User.score.desc()).limit(limit).all()
+        return top_users
+    finally:
+        session.close()
 init_db()
