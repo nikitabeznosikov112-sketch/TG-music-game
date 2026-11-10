@@ -1,14 +1,33 @@
-from fastapi import FastAPI, Request, Form, Depends
+from fastapi import FastAPI, Request, Form, Depends, HTTPException, status
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, RedirectResponse
 import uvicorn
-
+from fastapi.security import HTTPBasic, HTTPBasicCredentials
+import secrets
 from Database import Session
 from repositories.admin_repositories import AdminRepository
+import os
+from dotenv import load_dotenv
 
+load_dotenv()
+security = HTTPBasic()
 app = FastAPI(title='Панель админа')
 templates = Jinja2Templates(directory="templates")
 
+def check_the_password(credentials: HTTPBasicCredentials=Depends(security)):
+    correct_username = os.getenv('ADMIN_USERNAME')
+    correct_password = os.getenv('ADMIN_PASSWORD')
+
+    is_correct_username = secrets.compare_digest(credentials.username, correct_username)
+    is_correct_password = secrets.compare_digest(credentials.password, correct_password)
+
+    if not (is_correct_username and is_correct_password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, 
+            detail="Неверный логин или пароль",
+            headers={'WWW-Authenticate': 'Basic'},
+        )
+    return credentials.username
 def get_admin_repo():
     session = Session()
     try:
@@ -17,7 +36,7 @@ def get_admin_repo():
         session.close()
 
 @app.get('/admin', response_class=HTMLResponse)
-def admin_panel(request: Request, repo = Depends(get_admin_repo)):
+def admin_panel(request: Request, repo = Depends(get_admin_repo), username: str = Depends(check_the_password)):
     users = repo.get_all_users()
     return templates.TemplateResponse(request=request, name='index.html', context={'users': users})
 
