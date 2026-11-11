@@ -3,6 +3,7 @@ from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, RedirectResponse
 import uvicorn
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
+from werkzeug.security import check_password_hash
 import secrets
 from database import Session
 from repositories.admin_repositories import AdminRepository
@@ -16,10 +17,10 @@ templates = Jinja2Templates(directory="templates")
 
 def check_the_password(credentials: HTTPBasicCredentials=Depends(security)):
     correct_username = os.getenv('ADMIN_USERNAME')
-    correct_password = os.getenv('ADMIN_PASSWORD')
+    correct_password_hash = os.getenv('ADMIN_PASSWORD_HASH')
 
     is_correct_username = secrets.compare_digest(credentials.username, correct_username)
-    is_correct_password = secrets.compare_digest(credentials.password, correct_password)
+    is_correct_password = check_password_hash(correct_password_hash, credentials.password)
 
     if not (is_correct_username and is_correct_password):
         raise HTTPException(
