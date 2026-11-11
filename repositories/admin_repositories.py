@@ -1,4 +1,4 @@
-from Database import User, Session as dbSession
+from database import User, Session as dbSession
 from sqlalchemy.orm import Session
 class AdminRepository:
     def __init__(self, session: Session):

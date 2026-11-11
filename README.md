@@ -4,13 +4,32 @@
 
 ## Установка и запуск
 
-1. Установи зависимости:
+### Через Docker
+
+1. Установи [Docker](https://docs.docker.com/get-docker/) и Docker Compose.
+2. Создай `.env` по примеру `.env.example` и заполни его.
+3. Запусти проект одной командой:
+```bash
+docker compose up --build
+```
+- Панель администратора будет доступна по адресу https://127.0.0.1:8001/admin
+### Локально (без докера)
+1. Установи зависимости
+```bash
 pip install -r requirements.txt
-2. Создай .env по .env.example
-3. Запусти:
-- Для первого запуска -- Database.py
-- BOTLogic для запуска бота
-- admin.py для запуска панели администратора. Адрес - http://127.0.0.1:8001/admin
+```
+2. Создай `.env` по `.env.example`
+3. Создай базу данных
+4. Примени миграции (для первого запуска):
+```bash
+alembic upgrade head
+```
+5. Запусти `BOTLogic.py` для запуска бота
+6. Для панели администрирования запусти 
+```bash
+uvicorn admin:app --host 127.0.0.1 --port 8001
+```
+- - Панель администратора будет доступна по адресу https://127.0.0.1:8001/admin
 
 ## Функции
 
@@ -29,12 +48,14 @@ pip install -r requirements.txt
 ## Стек
 - Python 3.12
 - Aiogram (Асинхронный Telegram-бот)
-- SQLite(База данных)
+- PostgreSQL(База данных)
 - SQLAlchemy(ORM)
+- Docker/Docker Compose(Контейнеризация)
 - python-dotenv(Хранение секретов)
 - httpx(Асинхронные запросы к сервисам)
 - FastApi(Веб-панель)
 - pytest(Тесты)
+- Alembic(Миграции базы данных)
 - Jinja2(Обработка шаблонов)
 - Git
 

@@ -4,7 +4,7 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 import uvicorn
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 import secrets
-from Database import Session
+from database import Session
 from repositories.admin_repositories import AdminRepository
 import os
 from dotenv import load_dotenv
