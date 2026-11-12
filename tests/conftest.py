@@ -4,6 +4,9 @@ from database import Base
 from repositories.admin_repositories import AdminRepository
 from repositories.user_repositories import UserRepository
 import pytest
+import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 TEST_DB = "sqlite:///:memory:"
 
