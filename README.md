@@ -1,5 +1,7 @@
 ## Game Bot
 
+[![Run Tests](https://github.com/nikitabeznosikov112-sketch/TG-music-game/actions/workflows/tests.yml/badge.svg)](https://github.com/nikitabeznosikov112-sketch/TG-music-game/actions/workflows/tests.yml)
+
 Телеграм-бот с играми. Позволяет пользователям играть в различные мини игры сохраняя их статистику. Имеет панель администрирования.
 
 ## Установка и запуск
