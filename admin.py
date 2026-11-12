@@ -9,13 +9,17 @@ from database import Session
 from repositories.admin_repositories import AdminRepository
 import os
 from dotenv import load_dotenv
+import logging
+
 
 load_dotenv()
 security = HTTPBasic()
 app = FastAPI(title='Панель админа')
 templates = Jinja2Templates(directory="templates")
+logger = logging.getLogger("admin_authentication")
+logger.setLevel(logging.WARNING)
 
-def check_the_password(credentials: HTTPBasicCredentials=Depends(security)):
+def check_the_password(request: Request, credentials: HTTPBasicCredentials=Depends(security)):
     correct_username = os.getenv('ADMIN_USERNAME')
     correct_password_hash = os.getenv('ADMIN_PASSWORD_HASH')
 
@@ -23,6 +27,8 @@ def check_the_password(credentials: HTTPBasicCredentials=Depends(security)):
     is_correct_password = check_password_hash(correct_password_hash, credentials.password)
 
     if not (is_correct_username and is_correct_password):
+        client_ip = request.client.host if request.client else 'Unknown'
+        logger.warning(f"FAILED LOGIN; IP: {client_ip} USERNAME = '{credentials.username}'")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, 
             detail="Неверный логин или пароль",
@@ -65,5 +71,9 @@ def confirm_reset_score(request: Request, tg_id: int, repo = Depends(get_admin_r
 def reset_user(tg_id: int, repo = Depends(get_admin_repo)):
     repo.reset_user(tg_id)
     return RedirectResponse(url='/admin', status_code=303)
+
+@app.get('/admin/change_score/{tg_id}')
+def confirm_reset_score(request: Request, tg_id: int, repo = Depends(get_admin_repo)):
+    score = Form()
 if __name__ == '__main__':
     uvicorn.run(app, host="0.0.0.0", port=8001)
