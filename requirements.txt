@@ -10,3 +10,4 @@ alembic
 werkzeug
 pytest
 pytest-asyncio
+python-multipart

@@ -72,6 +72,18 @@ def reset_user(tg_id: int, repo = Depends(get_admin_repo)):
     repo.reset_user(tg_id)
     return RedirectResponse(url='/admin', status_code=303)
 
+@app.get("/admin/confirm_change/{tg_id}", response_class=HTMLResponse)
+def confirm_change(request: Request, tg_id: int, repo = Depends(get_admin_repo)):
+    user = repo.get_user(tg_id)
+    if user:
+        return templates.TemplateResponse(request=request, name="change_score.html", context={'user': user})
+    return RedirectResponse(url="/admin")
+
+@app.post('/admin/change_score/{tg_id}')
+def change_score(tg_id: int, repo = Depends(get_admin_repo), score: int = Form(...)):
+    repo.change_score(tg_id, score)
+    return RedirectResponse(url="/admin", status_code=303)
+
 @app.get('/admin/change_score/{tg_id}')
 def confirm_reset_score(request: Request, tg_id: int, repo = Depends(get_admin_repo)):
     score = Form()
