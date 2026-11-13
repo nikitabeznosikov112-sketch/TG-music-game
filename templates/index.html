@@ -1,15 +1,80 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="'UTF-8">
+    <meta charset="UTF-8">
     <title>AdminPanel</title>
-    <style>
-        body { font-family: sans-serif; padding: 20px; background: #f4f4f4; }
-        table { border-collapse: collapse; width: 100%; background: white; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        th { background-color: #333; color: white; }
-        .btn { padding: 5px 10px; background: #3498db; color: white; text-decoration: none; border-radius: 3px; }
-        .btn-danger { background: #e74c3c; }
+        <style>
+        /* Сброс стандартных отступов */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body { 
+            font-family: 'Segoe UI', Arial, sans-serif; 
+            background: #121212; /* Темный фон (почти черный) */
+            color: #e0e0e0;      /* Светло-серый текст */
+            padding: 40px 20px; 
+        }
+
+        h1 { 
+            color: #ffffff; 
+            margin-bottom: 20px; 
+            font-size: 24px;
+            font-weight: 500;
+        }
+
+        table { 
+            border-collapse: collapse; 
+            width: 100%; 
+            background: #1e1e1e; /* Чуть светлее фона для контраста */
+            border-radius: 8px;   /* Закругленные углы */
+            overflow: hidden;     /* Чтобы углы таблицы не вылезали */
+        }
+
+        th, td { 
+            padding: 14px 16px; 
+            text-align: left; 
+            border-bottom: 1px solid #333; /* Тонкая темная линия между строками */
+        }
+
+        th { 
+            background-color: #2c2c2c; /* Темно-серый фон шапки */
+            color: #ffffff; 
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 1px;
+        }
+
+        /* Убираем линию у последней строки */
+        tr:last-child td { border-bottom: none; }
+
+        /* Подсветка строки при наведении (как в современных интерфейсах) */
+        tr:hover td { background-color: #2a2a2a; }
+
+        /* Стили для кнопок */
+        .btn { 
+            display: inline-block;
+            padding: 6px 12px; 
+            background: #333; 
+            color: #fff; 
+            text-decoration: none; 
+            border-radius: 4px; 
+            font-size: 13px;
+            transition: background 0.2s ease; /* Плавная смена цвета */
+        }
+
+        .btn:hover { background: #444; }
+
+        /* Красные кнопки (Удалить) */
+        .btn-danger { 
+            background: #e74c3c; 
+        }
+
+        .btn-danger:hover { 
+            background: #c0392b; 
+        }
+
+        /* Отступы для кнопок в одной ячейке */
+        td .btn { margin-right: 5px; margin-bottom: 5px; }
     </style>
 </head>
 <body>
@@ -17,11 +82,11 @@
 
     <table>
         <tr>
-            <td>ID</td>
-            <td>Telegram ID</td>
-            <td>Имя</td>
-            <td>Очки</td>
-            <td>Статус подписки</td>
+            <th>ID</th>
+            <th>Telegram ID</th>
+            <th>Имя</th>
+            <th>Очки</th>
+            <th>Статус подписки</th>
             <th>Действия</th>
         </tr>
         {% for user in users %}
