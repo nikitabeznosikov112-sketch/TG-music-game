@@ -21,6 +21,7 @@
             <td>Telegram ID</td>
             <td>Имя</td>
             <td>Очки</td>
+            <td>Статус подписки</td>
             <th>Действия</th>
         </tr>
         {% for user in users %}
@@ -29,10 +30,16 @@
             <td>{{ user.tg_id }}</td>
             <td>{{ user.name }}</td>
             <td>{{ user.score }}</td>
+            {% if user.subscription == True %}
+            <td>Активна</td>
+            {% else %}
+            <td>Отсутствует</td>
+            {% endif %}
             <td>
                 <a href="/admin/confirm_delete/{{ user.tg_id }}" class="btn btn-danger">Удалить</a>
                 <a href="/admin/confirm_reset/{{ user.tg_id }}" class="btn btn-danger">Сбросить счет</a>
                 <a href="/admin/confirm_change/{{ user.tg_id }}" class="btn btn-danger">Изменить счет</a>
+                <a href="/admin/confirm_status/{{ user.tg_id }}" class="btn btn-danger">Изменить статус</a>
             </td>
         </tr>
         {% endfor %}

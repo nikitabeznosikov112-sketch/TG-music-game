@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, String, Integer, BigInteger
+from sqlalchemy import create_engine, Column, String, Integer, BigInteger, Boolean
 from sqlalchemy.orm import sessionmaker, declarative_base
 import os
 from dotenv import load_dotenv
@@ -16,3 +16,4 @@ class User(Base):
     tg_id = Column(BigInteger, unique=True, nullable=False)
     name = Column(String, nullable=False)
     score = Column(Integer, default=0)
+    subscription = Column(Boolean, nullable=False, default=False)

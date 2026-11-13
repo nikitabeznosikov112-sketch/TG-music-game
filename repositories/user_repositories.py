@@ -32,3 +32,8 @@ class UserRepository:
     def get_top(self, limit: int = 10):
         '''Выдает рейтинг'''
         return self.session.query(User).order_by(User.score.desc()).limit(limit).all()
+
+    def get_status(self, tg_id: int):
+        user = self.session.query(User).filter_by(tg_id=tg_id).first()
+        if user:
+            return user.subscription

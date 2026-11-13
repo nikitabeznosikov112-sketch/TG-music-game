@@ -15,6 +15,14 @@ class AdminRepository:
         user.score = 0
         self.session.commit()
 
+    def change_status(self, tg_id: int):
+        user = self.get_user(tg_id)
+        if user.subscription == False:
+            user.subscription = True
+            self.session.commit()
+        else:
+            user.subscription = False
+            self.session.commit()
     def delete_user(self, tg_id: int):
         
         user = self.get_user(tg_id)
@@ -29,4 +37,7 @@ class AdminRepository:
         user.score = score
         self.session.commit()
 
-
+    def get_status(self, tg_id: int):
+        user = self.get_user(tg_id)
+        if user:
+            return
